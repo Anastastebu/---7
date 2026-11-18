@@ -1,0 +1,6 @@
+situation_id,initial_state,event,guard_condition,new_state,action,ontology_mapping
+SIT_01,NormalState,HighCPULoadEvent,CPU_Usage > 90% for 5m,OverloadedState,ScaleUpAction,Event->InfrastructureEvent; State->AlertState; Action->RecoveryAction
+SIT_02,OnlineState,NetworkLinkDownEvent,PingLoss == 100%,UnreachableState,FailoverToBackupAction,Event->InfrastructureEvent; State->AlertState; Action->RecoveryAction
+SIT_03,NormalState,HighTemperatureEvent,Temp > 35C,OverheatState,ShutdownServerAction,Sensor->Sensor; Event->InfrastructureEvent; Action->RecoveryAction
+SIT_04,HealthyState,DiskSpaceLowEvent,FreeSpace < 5%,StorageFullState,PurgeOldLogsAction,State->AlertState; Action->RecoveryAction
+SIT_05,SecuredState,UnauthorizedAccessEvent,FailedLogins > 10,SecurityAlertState,BlockIPAction,Event->Incident; Action->RecoveryAction

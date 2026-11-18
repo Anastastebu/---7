@@ -1,0 +1,98 @@
+@prefix ex: <http://example.org/it_infrastructure#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://example.org/it_infrastructure> a owl:Ontology ;
+    rdfs:comment "Онтологія управління IT-інфраструктурою ЛР7"@uk .
+
+# Основні класи
+ex:ITResource a owl:Class .
+ex:HardwareResource a owl:Class ; rdfs:subClassOf ex:ITResource .
+ex:SoftwareResource a owl:Class ; rdfs:subClassOf ex:ITResource .
+ex:Event a owl:Class .
+ex:State a owl:Class .
+ex:Action a owl:Class .
+ex:Sensor a owl:Class .
+ex:Incident a owl:Class ; rdfs:subClassOf ex:Event .
+ex:InfrastructureEvent a owl:Class ; rdfs:subClassOf ex:Event .
+ex:AlertState a owl:Class ; rdfs:subClassOf ex:State .
+ex:RecoveryAction a owl:Class ; rdfs:subClassOf ex:Action .
+
+# Диз'юнктність (Disjoint Classes)[cite: 17]
+ex:HardwareResource owl:disjointWith ex:SoftwareResource .
+ex:Event owl:disjointWith ex:State .
+
+# Ієрархія апаратури
+ex:ComputeServer a owl:Class ; rdfs:subClassOf ex:HardwareResource .
+ex:NetworkDevice a owl:Class ; rdfs:subClassOf ex:HardwareResource .
+ex:StorageArray a owl:Class ; rdfs:subClassOf ex:HardwareResource .
+ex:Router a owl:Class ; rdfs:subClassOf ex:NetworkDevice .
+ex:Switch a owl:Class ; rdfs:subClassOf ex:NetworkDevice .
+ex:Firewall a owl:Class ; rdfs:subClassOf ex:NetworkDevice .
+
+# Ієрархія ПЗ
+ex:OperatingSystem a owl:Class ; rdfs:subClassOf ex:SoftwareResource .
+ex:DatabaseServer a owl:Class ; rdfs:subClassOf ex:SoftwareResource .
+ex:Hypervisor a owl:Class ; rdfs:subClassOf ex:SoftwareResource .
+ex:VirtualMachine a owl:Class ; rdfs:subClassOf ex:SoftwareResource .
+ex:Container a owl:Class ; rdfs:subClassOf ex:SoftwareResource .
+ex:KubernetesCluster a owl:Class ; rdfs:subClassOf ex:SoftwareResource .
+
+# Аксіоми обмежень[cite: 17]
+ex:Hypervisor rdfs:subClassOf [
+    a owl:Restriction ;
+    owl:onProperty ex:runsVirtualMachine ;
+    owl:someValuesFrom ex:VirtualMachine
+] .
+
+ex:ComputeServer rdfs:subClassOf [
+    a owl:Restriction ;
+    owl:onProperty ex:hostsResource ;
+    owl:allValuesFrom ex:SoftwareResource
+] .
+
+ex:VirtualMachine rdfs:subClassOf [
+    a owl:Restriction ;
+    owl:onProperty ex:isHostedOn ;
+    owl:onClass ex:ComputeServer ;
+    owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger
+] .
+
+# Об'єктні властивості
+ex:hostsResource a owl:ObjectProperty, owl:TransitiveProperty ;
+    rdfs:domain ex:HardwareResource ;
+    rdfs:range ex:SoftwareResource .
+
+ex:isHostedOn a owl:ObjectProperty ;
+    owl:inverseOf ex:hostsResource ;
+    rdfs:domain ex:SoftwareResource ;
+    rdfs:range ex:HardwareResource .
+
+ex:runsVirtualMachine a owl:ObjectProperty ;
+    rdfs:domain ex:Hypervisor ;
+    rdfs:range ex:VirtualMachine .
+
+ex:protectsResource a owl:ObjectProperty ;
+    rdfs:domain ex:Firewall ;
+    rdfs:range ex:ITResource .
+
+ex:monitorsResource a owl:ObjectProperty ;
+    rdfs:domain ex:Sensor ;
+    rdfs:range ex:ITResource .
+
+ex:triggersIncident a owl:ObjectProperty ;
+    rdfs:domain ex:Event ;
+    rdfs:range ex:Incident .
+
+ex:requiresAction a owl:ObjectProperty ;
+    rdfs:domain ex:Incident ;
+    rdfs:range ex:Action .
+
+# Data Properties
+ex:hasIPAddress a owl:DatatypeProperty ; rdfs:domain ex:ITResource ; rdfs:range xsd:string .
+ex:hasCPUCount a owl:DatatypeProperty ; rdfs:domain ex:HardwareResource ; rdfs:range xsd:integer .
+ex:hasRAMGB a owl:DatatypeProperty ; rdfs:domain ex:HardwareResource ; rdfs:range xsd:decimal .
+ex:hasUptimeSeconds a owl:DatatypeProperty ; rdfs:domain ex:ITResource ; rdfs:range xsd:long .
+ex:isCriticalStatus a owl:DatatypeProperty ; rdfs:domain ex:ITResource ; rdfs:range xsd:boolean .

@@ -1,0 +1,54 @@
+@prefix ex: <http://example.org/it_infrastructure#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ex:srv_prod_01 a ex:ComputeServer ;
+    ex:hasIPAddress "192.168.1.10" ;
+    ex:hasCPUCount 64 ;
+    ex:hasRAMGB 256.0 ;
+    ex:hostsResource ex:esxi_01 .
+
+ex:esxi_01 a ex:Hypervisor ;
+    ex:runsVirtualMachine ex:vm_db_01, ex:vm_web_01 .
+
+ex:vm_db_01 a ex:VirtualMachine ;
+    ex:hasIPAddress "10.0.0.5" ;
+    ex:isHostedOn ex:srv_prod_01 .
+
+ex:vm_web_01 a ex:VirtualMachine ;
+    ex:hasIPAddress "10.0.0.6" ;
+    ex:isHostedOn ex:srv_prod_01 .
+
+ex:db_postgres a ex:DatabaseServer ;
+    ex:hasIPAddress "10.0.0.5" ;
+    ex:isCriticalStatus true .
+
+ex:fw_edge a ex:Firewall ;
+    ex:hasIPAddress "192.168.1.1" ;
+    ex:protectsResource ex:srv_prod_01 .
+
+ex:rtr_core a ex:Router ;
+    ex:hasIPAddress "192.168.1.254" .
+
+ex:sw_access_01 a ex:Switch ;
+    ex:hasIPAddress "192.168.1.2" .
+
+ex:sensor_temp_01 a ex:Sensor ;
+    ex:monitorsResource ex:srv_prod_01 .
+
+ex:evt_high_temp a ex:InfrastructureEvent ;
+    ex:triggersIncident ex:inc_overheat .
+
+ex:inc_overheat a ex:Incident ;
+    ex:requiresAction ex:act_cool_down .
+
+ex:act_cool_down a ex:RecoveryAction .
+
+ex:srv_backup_01 a ex:ComputeServer ; ex:hasIPAddress "192.168.1.20" ; ex:hasCPUCount 16 ; ex:hasRAMGB 64.0 .
+ex:os_linux_01 a ex:OperatingSystem ; ex:hasIPAddress "10.0.0.5" .
+ex:cnt_app_01 a ex:Container ; ex:isCriticalStatus false .
+ex:k8s_prod a ex:KubernetesCluster ; ex:hasIPAddress "10.0.1.1" .
+ex:san_storage_01 a ex:StorageArray ; ex:hasRAMGB 128.0 .
+ex:sensor_ping_01 a ex:Sensor ; ex:monitorsResource ex:rtr_core .
+ex:evt_link_down a ex:InfrastructureEvent ; ex:triggersIncident ex:inc_network_down .
+ex:inc_network_down a ex:Incident ; ex:requiresAction ex:act_restart_router .
+ex:act_restart_router a ex:RecoveryAction .

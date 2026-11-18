@@ -1,0 +1,36 @@
+entity_type,name,parent,definition,domain,range,characteristics,source
+Class,ITResource,,Обчислювальний або мережевий компонент інфраструктури, ,,Експерт
+Class,HardwareResource,ITResource,Фізичне обладнання що надає обчислювальні або комунікаційні можливості, ,,Експерт
+Class,SoftwareResource,ITResource,Програмне забезпечення що виконується на апаратному забезпеченні, ,,Експерт
+Class,ComputeServer,HardwareResource,Апаратний сервер призначений для виконання обчислювальних задач, ,,Експерт
+Class,StorageArray,HardwareResource,Апаратна система збереження даних призначена для блочного або файлового доступу, ,,Експерт
+Class,NetworkDevice,HardwareResource,Апаратний пристрій призначений для пересилання та фільтрації мережевого трафіку, ,,Експерт
+Class,Router,NetworkDevice,Мережевий пристрій що здійснює маршрутизацію пакетів між підмережами, ,,Експерт
+Class,Switch,NetworkDevice,Мережевий пристрій що здійснює комутацію кадрів у межах однієї мережі, ,,Експерт
+Class,Firewall,NetworkDevice,Пристрій безпеки що здійснює фільтрацію мережевого трафіку за правилами, ,,Експерт
+Class,OperatingSystem,SoftwareResource,Системне ПЗ що управляє апаратними ресурсами комп'ютера, ,,Експерт
+Class,DatabaseServer,SoftwareResource,Прикладне ПЗ що забезпечує збереження та обробку структурованих даних, ,,Експерт
+Class,Hypervisor,SoftwareResource,Системне ПЗ що забезпечує створення та запуск віртуальних машин, ,,Експерт
+Class,VirtualMachine,SoftwareResource,Програмна імплементація комп'ютера що виконує програми як фізичний сервер, ,,Експерт
+Class,Container,SoftwareResource,Ізольоване середовище виконання програм що ділить ядро ОС із господарем, ,,Експерт
+Class,KubernetesCluster,SoftwareResource,Система оркестрації що автоматизує розгортання та масштабування контейнерів, ,,Експерт
+Class,Incident,Event,Подія що викликає незапланований переривання або зниження якості IT-послуги, ,,Експерт
+Class,AlertState,State,Стан системи що характеризується перевищенням порогових показників моніторингу, ,,Експерт
+Class,InfrastructureEvent,Event,Подія що фіксується в системі журналювання інфраструктури, ,,Експерт
+Class,RecoveryAction,Action,Процедура що здійснюється для відновлення нормального функціонування ресурсу, ,,Експерт
+Class,MonitoringSensor,Sensor,Програмний або апаратний агент що збирає метрики стану ресурсів, ,,Експерт
+ObjectProperty,hostsResource, ,Відношення хостингу між апаратним ресурсом та ПЗ,HardwareResource,SoftwareResource,Transitive,Експерт
+ObjectProperty,isHostedOn, ,Обернене відношення хостингу ПЗ на апаратурі,SoftwareResource,HardwareResource,InverseOf:hostsResource,Експерт
+ObjectProperty,runsVirtualMachine, ,Відношення запуску ВМ гіпервізором,Hypervisor,VirtualMachine, ,Експерт
+ObjectProperty,routesTrafficFor, ,Відношення маршрутизації трафіку для пристрою,Router,ITResource, ,Експерт
+ObjectProperty,protectsResource, ,Відношення захисту ресурсу мережевим екраном,Firewall,ITResource, ,Експерт
+ObjectProperty,monitorsResource, ,Відношення збору метрик сенсором з ресурсу,MonitoringSensor,ITResource, ,Експерт
+ObjectProperty,triggersIncident, ,Відношення між подією та викликаним інцидентом,InfrastructureEvent,Incident, ,Експерт
+ObjectProperty,requiresAction, ,Відношення між інцидентом та дією з усунення,Incident,RecoveryAction, ,Експерт
+ObjectProperty,backsUpDatabase, ,Відношення створення резервної копії бази даних,SoftwareResource,DatabaseServer, ,Експерт
+ObjectProperty,connectsToSwitch, ,Відношення фізичного або логічного підключення до комутатора,ITResource,Switch, ,Експерт
+DataProperty,hasIPAddress, ,Мережева IP-адреса ресурсу,ITResource,xsd:string, ,Експерт
+DataProperty,hasCPUCount, ,Кількість ядер процесора,HardwareResource,xsd:integer, ,Експерт
+DataProperty,hasRAMGB, ,Обсяг оперативної пам'яті в гігабайтах,HardwareResource,xsd:decimal, ,Експерт
+DataProperty,hasUptimeSeconds, ,Час безперервної роботи ресурсу в секундах,ITResource,xsd:long, ,Експерт
+DataProperty,isCriticalStatus, ,Прапорець критичного стану ресурсу,ITResource,xsd:boolean, ,Експерт
